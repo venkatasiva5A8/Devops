@@ -1,0 +1,273 @@
+jump1-prod-cis.iotspdev.io  //login in jump host //Cisco@123
+su - hulk-user
+hulk //password
+ls
+
+ssh-add tme-eu-8.pem (for eu cluster)
+ssh -F tme-eu-8.ssh w1
+ssh-add kinetic-us.pem (for us cluster)
+ssh -F kinetic-us.ssh w1
+ctrl+R --->type 'pull' then Esc(escape button) then execute , it will download docker image
+----------------------------------------------------------------------------------------------------------
+https://mesos-eu.ciscokinetic.io:9443/#/agents/588871bd-d7f3-4e99-afec-8f91a0ef5de7-S52/frameworks/1b228582-d17f-412b-aa70-c86611ab1dc6-0004/executors/ct:1568946767647:0:elk-sanity:/tasks/ct:1568946767647:0:elk-sanity:/browse
+
+
+588871bd-d7f3-4e99-afec-8f91a0ef5de7-S52/frameworks/1b228582-d17f-412b-aa70-c86611ab1dc6-0004/executors/ct:1568946767647:0:elk-sanity:
+
+cd /mnt/log/mesos/slaves/588871bd-d7f3-4e99-afec-8f91a0ef5de7-S52/frameworks/1b228582-d17f-412b-aa70-c86611ab1dc6-0004/executors/ct:1568946767647:0:elk-sanity:/runs/latest/
+ls
+less stderr        
+
+//Check after agents and before tasks
+
+----------------------------------------------------------------------------------------------------
+
+
+BEMS alerts:
+-----------
+Hi Team,
+
+for BEMS alerts - please check the BEMS alert message & its severity, 
+if severity is HIGH or Urgent then please escalate it to respective DCM/GMM team in clusterHQ teams room 
+and always forward BEMS alert email to ciscokinetic.io-escalation(mailer list) mailto:ciscokinetic.io-escalation@cisco.com and keep Ming Chi Chen in CC.
+
+
+
+---------------------------------------------------------------------------------------
+INFO | us | framework_info | leader_change | Runbook ID - 0011
+It's a information alert, we have to resolve manually                //resolve manually
+
+If it is coming continuously that time need to check which frame work leader got change, goto the particular node, check the logs and find why leader got changed due to what metricslike
+
+--------------------------------------------------------------------------------------------------
+Infra logs/Mesos logs
+------------------------
+1.If something goes wrong have to check logs(specific node) /mnt/logs/infra_services and /mnt/logs/mesos to identify root cause of issue
+Note: we can get url from sandbox(Mesos dashboard)
+https://mesos-eu.ciscokinetic.io:9443/#/agents/2cb8853f-e643-47f2-904b-8ada0b8a5d46-S4/frameworks/2cb8853f-e643-47f2-904b-8ada0b8a5d46-0003/executors/elk_filebeat_audit.1db7da49-ce04-11e9-bfb8-0242d56f5cda/tasks/elk_filebeat_audit.1db7da49-ce04-11e9-bfb8-0242d56f5cda/browse
+2cb8853f-e643-47f2-904b-8ada0b8a5d46-S4=> agent id(worker node)
+2cb8853f-e643-47f2-904b-8ada0b8a5d46-0003=>integrated framework Id to Mesos
+elk_filebeat_audit.1db7da49-ce04-11e9-bfb8-0242d56f5cda = > Task ID
+Zookeeper
+-------------
+1.We can only see zookeeper on master nodes to  store all the states of frameworks which are integrated to Mesos
+2.for leader chenge issuse then we have to login to control nodes then we can see meso-master and zookeeper logs
+3.leader may change because some resource(mem.cpu,disk) constraints
+Flink
+-----
+1.flink is used to run  services like iot-arcadia,iot-glacier, io-sequoia,iot-zion on worker nodes(it can be worker and worker ephemeral) 
+2.flink scheduler schedule to run  5 task managers on production
+=========================================================================================================
+*hbrSanity (39 testcases)
+•azureIotHub (azureSanity) (28 testcases)
+•mqttcheck (11 testcases)
+•ibmDataFlow (2 testcases)
+
+===============================================
+RMQ cluster is for customer side
+
+echosrvr |nc localhost 2181 //to check zoo keeper leader
+
+-------------------------------------------------------------------
+https://confluence-eng-sjc5.cisco.com/conf/display/IOT/SRE+-+HowTo+-+Operations#SRE-HowTo-Operations-DEPLOYMENT
+https://confluence-eng-sjc5.cisco.com/conf/display/IOT/Deployment+Notes                        //deployment process
+https://confluence-eng-sjc5.cisco.com/conf/display/IOT/3.04.01+Instructions+for+sharing+logs+with+Dev+teams //CKC run book
+
+
+===================================================================================
+Hi Folks, please make note that have to do Daily DB activities regrading CEM who are in Primary on call.
+1.Check database server status(both master and replica)
+2.check database size(both master and replica)
+3.Check db connections(on master)
+4.Check the replication status(on replica server)
+5.Check time lag between master and replica(on replica server)
+
+==================================================================
+1. Create tar Archive File
+The below example command will create a tar archive file tecmint-14-09-12.tar for a directory /home/tecmint in current working directory. See the example command in action.
+
+# tar -cvf tecmint-14-09-12.tar /home/tecmint/
+
+
+ 
+Let’s discuss each option that we have used in the above command for creating a tar archive file.
+
+c – Creates a new .tar archive file.
+v – Verbosely show the .tar file progress.
+f – File name type of the archive file.
+2. Create tar.gz Archive File
+To create a compressed gzip archive file we use the option as z. For example the below command will create a compressed MyImages-14-09-12.tar.gz file for the directory /home/MyImages. (Note : tar.gz and tgz both are similar).
+
+# tar cvzf MyImages-14-09-12.tar.gz /home/MyImages
+OR
+# tar cvzf MyImages-14-09-12.tgz /home/MyImages
+
+
+3. Create tar.bz2 Archive File
+The bz2 feature compress and create archive file less than the size of the gzip. The bz2 compression takes more time to compress and decompress files as compared to gzip which takes less time. To create highly compressed tar file we use option as j. The following example command will create a Phpfiles-org.tar.bz2 file for a directory /home/php. (Note: tar.bz2 and tbz is similar as tb2).
+
+# tar cvfj Phpfiles-org.tar.bz2 /home/php
+OR
+# tar cvfj Phpfiles-org.tar.tbz /home/php
+OR 
+# tar cvfj Phpfiles-org.tar.tb2 /home/php
+
+
+4. Untar tar Archive File
+To untar or extract a tar file, just issue following command using option x (extract). For example the below command will untar the file public_html-14-09-12.tar in present working directory. If you want to untar in a different directory then use option as -C (specified directory).
+
+## Untar files in Current Directory ##
+# tar -xvf public_html-14-09-12.tar
+
+## Untar files in specified Directory ##
+# tar -xvf public_html-14-09-12.tar -C /home/public_html/videos/
+
+
+5. Uncompress tar.gz Archive File
+To Uncompress tar.gz archive file, just run following command. If would like to untar in different directory just use option -C and the path of the directory,  like we shown in the above example.
+
+# tar -xvf thumbnails-14-09-12.tar.gz
+
+
+6. Uncompress tar.bz2 Archive File
+To Uncompress highly compressed tar.bz2 file, just use the following command. The below example command will untar all the .flv files from the archive file.
+
+# tar -xvf videos-14-09-12.tar.bz2
+----------------------------------------------------------------------------------------------
+CSR AND ASA LOGIN 
+
+----------------------------------------------------------
+
+EU
+
+CSR
+https://eu.ciscokinetic.io/core_routers/513
+user: admin
+passwd: 1F7=RzJhHw)chL
+internal ip: 10.0.21.100
+external ip: 34.240.190.128
+
+ASA
+https://eu.ciscokinetic.io/remote_access_routers/575
+user: admin
+passwd: OF+uM_yXe7vZp1
+internal ip: 10.0.22.224
+external ip: 34.251.214.246
+===============================================================
+US
+
+CSR
+https://us.ciscokinetic.io/core_routers/513
+user: admin
+passwd: Bc#Njm4j&CvG0H
+internal ip: 10.0.21.100
+external ip: 34.208.182.252
+
+ASA
+https://us.ciscokinetic.io/remote_access_routers/575
+user: admin
+passwd: dfv5K)Q(YfZVn4
+internal ip: 10.0.22.104
+external ip: 52.34.140.134
+
+----------------------------------------------------------------
+how to login 
+
+add key of ue/us cluster - (ssh bastion) ssh -F kinetic-us.ssh b1 - (connect given ip's) ssh admin@34.240.190.128 - (user) en & use given password 
+- then run given commands 
+
+---------------------------------------------------------------
+
+
+show crypto session detail | be FCW22320035 ----- check vpn session
+
+clear crypto ikev2 sa psh 91. -----reset vpn session 
+
+show crypto ikev2 session detail | be 57 ----- show details 
+
+show crypto ikev2 sa detail | be 57 ----- show details
+========================================================
+ 
+
+=================================================
+find /Archived_Results/Detailed_Archive/ -type f -mtime +15 -delete //delete logs
+
+1. Delete Files Older Than 30 Days
+This command will delete all files older than 30 days in system /opt/backup directory.
+find /opt/backup -type f -mtime +30 -exec rm -f {} \;
+2. Delete Files Older Than 30 Days with .log Extension
+If you want to delete only specified extension files, you can use the following command.
+find /var/log -name "*.log" -type f -mtime +30 -exec rm -f {} \;
+==========================================================================
+sudo du -sch /* 2> /dev/null  //finding file size redirectiong to null
+===============================
+true > configurator.log// nullify
+===============================================
+
+ipcs -s
+for i in `ipcs -s | awk '/apache/ {print $2}'`; do (sudo ipcrm -s $i); done  //to delete the cache
+
+====================================================================================================
+https://mesos-eu.ciscokinetic.io:9443/#/agents/588871bd-d7f3-4e99-afec-8f91a0ef5de7-S52/frameworks/1b228582-d17f-412b-aa70-c86611ab1dc6-0004/executors/ct:1568946767647:0:elk-sanity:/tasks/ct:1568946767647:0:elk-sanity:/browse
+
+
+588871bd-d7f3-4e99-afec-8f91a0ef5de7-S52/frameworks/1b228582-d17f-412b-aa70-c86611ab1dc6-0004/executors/ct:1568946767647:0:elk-sanity:
+
+cd /mnt/logs/mesos/slaves/588871bd-d7f3-4e99-afec-8f91a0ef5de7-S52/frameworks/1b228582-d17f-412b-aa70-c86611ab1dc6-0004/executors/ct:1568946767647:0:elk-sanity:/runs/latest/
+ls
+less stderr   //Check after agents and before tasks
+
+----------------------------------------------------------------
+ du -sch *  (To know size of the file/directories in the Current Working Directory) 
+ sudo du -sch /* 2> /dev/null   (to avoid the permission issue errors)
+ gzip filename   (to gzip a file) //source file is not there
+ gunzip file.gz //to unzip file//source zip file is not there
+ gzip -c filename > filename.gz  & (To keep original same and create a new zip file, here '&' is to run the process in the backend)
+ tar -cvzf newfile.tar.gz  sourcefiles/dirctories (it is for gzipping the no.of files/directories in to tar.gz  file)
+  ex: tar -cvzf /opt/etc.tar.gz  /etc (Here gzipping the '/etc' directory to 'etc.tar.gz' file)
+tar -xvf filename.tar.gz (This is to extract the files in the current location)
+df -h (to get the overall disk space)
+free -m (to the memory details)
+top (to view cpu, memory, other info)
+
+-------------------------------------------------
+in tar when zip ,existing file is there and new file is created
+but in gzip existing file will be zipped
+------------------------------------------------------------------------
+Data Flow: Provider > Extension of the respective provider > Extension Engine (responsible for mapping the data of the respective model) > 
+real-time device engine nodes > real-time device engine northbound node > CKC Components and API.
+
+============================================================================
+/opt/cdpdeployment/configuratorDaemon/resources/atomiton/configurator/spaces/scripts'. //configurator.log issue
+
+----------------------------------------------------------------------------------
+cd /mnt/log/infra_services/   //docker logs (Shift G --goes to end of line)
+
+cat docker.log.2 | grep -i 'message_type="trace"' //greping trace message in docker log
+
+docker inspect containerid | grep -i created //when the container started
+
+
+$vi /etc/cisco_iot/boot_config/meta_data.json   //path or updating scalinator zip file
+
+=================================================================================
+Disk usage path: EU_W6
+/mnt/log/infra_services/fogdirector/fd_gwaas-fog-director-0.185c3431-db3b-11e9-bfb8-0242d56f5cda
+
+Sai Babu Tanguturi 7:20 AM
+==========================================
+https://marathon-services-cicd.iotspdev.io:9443/ui/#/apps
+In url cluster name will be cicd only
+
+Haproxy-username and password
+cicd-user
+A?RQSc8U;LNmKl/U
+-------------------
+cicd: esuser,iRC*2UAXxo //kibana CICD
+
+
+
+
+
+
+
